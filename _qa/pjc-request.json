@@ -1,0 +1,7 @@
+{
+  "renderType": "automation",
+  "renderSettings": {
+    "viewport": { "width": 1200, "height": 800 }
+  },
+  "overseerScript": "await page.goto('https://little-whale-run.vercel.app/', {waitUntil:'networkidle0'}); await page.waitForDelay(600); const s = await page.evaluate(() => window.__whaleGame.snapshot()); await page.meta.log(s); await page.render.screenshot();"
+}

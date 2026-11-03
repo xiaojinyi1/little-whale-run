@@ -1,0 +1,158 @@
+/* ------------------------------------------------------------------
+   小鲸鱼快跑 — 页面外壳
+   职责：全屏画布、移动端安全区、暂停按钮与无滚动页面。
+   游戏内所有视觉均由 Canvas 2D 绘制，页面本身不依赖任何外部资源。
+------------------------------------------------------------------- */
+
+:root {
+  --ink: #083248;
+  --foam: #eafcff;
+  --glass: rgba(8, 50, 72, 0.28);
+  --glass-border: rgba(234, 252, 255, 0.34);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #062b40;
+}
+
+body {
+  font-family: "Nunito", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Noto Sans SC", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+
+#game-shell {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(124, 228, 240, 0.24), transparent 58%),
+    linear-gradient(180deg, #bdeef8 0%, #0b4c6b 60%, #04253a 100%);
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  cursor: pointer;
+  touch-action: none;
+}
+
+/* 仅在触屏设备出现的暂停按钮；键盘 P 与点击画面同样有效。 */
+#pause-btn {
+  position: fixed;
+  z-index: 3;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  background: var(--glass);
+  color: var(--foam);
+  box-shadow: 0 6px 22px rgba(1, 20, 33, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition: opacity 180ms ease, transform 180ms ease, background 160ms ease;
+}
+
+#pause-btn.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+#pause-btn:hover {
+  background: rgba(8, 50, 72, 0.46);
+}
+
+#pause-btn:focus-visible {
+  outline: 2px solid #eafcff;
+  outline-offset: 3px;
+}
+
+#pause-btn .bars {
+  display: flex;
+  gap: 4px;
+}
+
+#pause-btn .bars i {
+  display: block;
+  width: 4px;
+  height: 15px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+#pause-btn.is-paused .bars {
+  width: 14px;
+  height: 16px;
+  margin-left: 2px;
+  border-left: 11px solid currentColor;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  gap: 0;
+}
+
+#pause-btn.is-paused .bars i {
+  display: none;
+}
+
+/* 竖屏时给玩家的轻提示，不遮挡游戏，不拦截输入。 */
+#rotate-hint {
+  position: fixed;
+  z-index: 2;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(6px);
+  padding: 7px 13px;
+  border: 1px solid rgba(234, 252, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(3, 31, 47, 0.3);
+  color: rgba(234, 252, 255, 0.72);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+@media (orientation: portrait) and (max-width: 760px) {
+  #rotate-hint {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pause-btn,
+  #rotate-hint {
+    transition: none;
+  }
+}
